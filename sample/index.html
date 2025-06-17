@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Symbol Deposit Monitor Sample</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    #log { white-space: pre-wrap; background: #f4f4f4; padding: 1em; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Symbol Deposit Monitor クライアントサイドサンプル</h1>
+  <div>
+    <label>ノードWebSocket URL: <input id="wsUrl" value="wss://your-symbol-node:3001/ws" size="40"></label><br>
+    <label>監視アドレス（ハイフンなし）: <input id="address" value="" size="48"></label><br>
+    <label>メッセージ文字列: <input id="msg" value=""></label><br>
+    <label>MosaicId: <input id="mosaicId" value=""></label><br>
+    <label>数量: <input id="amount" value=""></label><br>
+    <button id="startBtn">監視開始</button>
+    <button id="stopBtn" disabled>停止</button>
+  </div>
+  <h2>検出ログ</h2>
+  <div id="log"></div>
+  <script type="module">
+    import { DepositMonitor } from './deposit-monitor.js';
+
+    let monitor = null;
+    const logDiv = document.getElementById('log');
+    function log(msg) {
+      logDiv.textContent += msg + '\n';
+    }
+    document.getElementById('startBtn').onclick = () => {
+      const wsUrl = document.getElementById('wsUrl').value;
+      const address = document.getElementById('address').value;
+      const messageText = document.getElementById('msg').value;
+      const mosaicId = document.getElementById('mosaicId').value;
+      const amount = document.getElementById('amount').value;
+      logDiv.textContent = '';
+      monitor = new DepositMonitor(wsUrl, address);
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+      // コールバックで検出後の処理を記述
+      monitor.monitorDeposits((tx) => {
+        log('入金検出: ' + JSON.stringify(tx, null, 2));
+        // ここに検出後の任意の処理を記述できます
+      }, {
+        messageText: messageText || undefined,
+        mosaicId: mosaicId || undefined,
+        amount: amount || undefined
+      });
+      log('監視を開始しました');
+    };
+    document.getElementById('stopBtn').onclick = () => {
+      if (monitor) monitor.close();
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+      log('監視を停止しました');
+    };
+  </script>
+</body>
+</html>
