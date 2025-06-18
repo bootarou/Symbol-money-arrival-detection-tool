@@ -1,0 +1,15 @@
+{
+  "name": "symbol-deposit-monitor-node",
+  "version": "1.0.0",
+  "description": "Symbolチェーン着金検出（Node.js用）",
+  "main": "deposit-monitor.js",
+  "type": "module",
+  "scripts": {
+    "start": "node sample.js"
+  },
+  "dependencies": {
+    "ws": "^8.15.1"
+  },
+  "author": "Bootarou",
+  "license": "MIT"
+}

@@ -34,7 +34,7 @@
       const mosaicId = document.getElementById('mosaicId').value;
       const amount = document.getElementById('amount').value;
       logDiv.textContent = '';
-      monitor = new DepositMonitor(["wss://xym760.llnodes.me:3001/ws","ws://80.209.225.238:3000/ws"], address);
+      monitor = new DepositMonitor(["wss://your-symbol-node1:3001/ws","wss://your-symbol-node2:3001/ws"], address);
       document.getElementById('startBtn').disabled = true;
       document.getElementById('stopBtn').disabled = false;
       // コールバックで検出後の処理を記述

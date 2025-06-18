@@ -17,11 +17,24 @@ This SDK enables real-time monitoring of Symbol blockchain deposits (incoming tr
 
 ---
 
-## Usage / 使い方
+## Node.jsでの利用方法
 
-### Node.js/TypeScriptでの利用例
-```typescript
-import { SymbolDepositDetectorSDK } from './src/index';
+1. `node` フォルダに移動し、依存パッケージをインストールします。
+   ```sh
+   cd node
+   npm install
+   ```
+2. `sample.js` を編集し、ノードURLやアドレス、フィルター条件を設定します。
+3. サンプルを実行します。
+   ```sh
+   npm start
+   ```
+
+---
+
+## Node.js用サンプルコード（`node/sample.js`）
+```js
+import { DepositMonitor } from './deposit-monitor.js';
 
 const nodeWsUrls = [
   'wss://your-symbol-node1:3001/ws',
@@ -29,48 +42,37 @@ const nodeWsUrls = [
 ];
 const address = 'あなたのSymbolアドレス（ハイフンなし）';
 
-const sdk = new SymbolDepositDetectorSDK(nodeWsUrls, address);
-sdk.monitorDeposits((tx) => {
-    console.log('入金検出:', tx);
-}, {
+const monitor = new DepositMonitor(nodeWsUrls, address);
+
+monitor.monitorDeposits(
+  (tx) => {
+    console.log('入金検出:', JSON.stringify(tx, null, 2));
+  },
+  {
     messageText: '注文123',
     mosaicId: '6BED913FA20223F8',
     amount: '1000000'
-}, (err) => {
+  },
+  (err) => {
     console.error('エラー:', err);
-});
-```
-
-### クライアントサイド（ブラウザ）での利用例
-`sample/index.html` をブラウザで開き、必要な情報を入力して「監視開始」ボタンを押してください。
-
-- `sample/deposit-monitor.js` をimportし、コールバックで検出後の処理やエラー処理を記述できます。
-- フィルター条件（メッセージ、MosaicId、数量）はUIで指定可能です。
-- ノードURLはカンマ区切りで複数指定できます。
-- 例：
-```js
-const nodeWsUrls = [
-  'wss://node1.example.com:3001/ws',
-  'wss://node2.example.com:3001/ws'
-];
-const monitor = new DepositMonitor(nodeWsUrls, 'あなたのSymbolアドレス');
-monitor.monitorDeposits(
-  (tx) => { /* 入金検出時の処理 */ },
-  { messageText: '注文', mosaicId: '...', amount: '...' },
-  (err) => { console.error('エラー:', err); }
+  }
 );
 ```
 
 ---
 
+## クライアントサイド（ブラウザ）での利用例
+`sample/index.html` をブラウザで開き、必要な情報を入力して「監視開始」ボタンを押してください。
+
+- `sample/deposit-monitor.js` をimportし、コールバックで検出後の処理やエラー処理を記述できます。
+- フィルター条件（メッセージ、MosaicId、数量）はUIで指定可能です。
+- ノードURLはカンマ区切りで複数指定できます。
+
+---
+
 ## API
 
-### SymbolDepositDetectorSDK (Node.js/TypeScript)
-- **constructor(nodeWsUrls: string[] | string, address: string)**
-- **monitorDeposits(onDeposit: (tx: any) => void, filter?: { messageText?: string; mosaicId?: string; amount?: string }, onError?: (err: any) => void)**
-- **close()**
-
-### DepositMonitor (クライアントサイド/ESM)
+### DepositMonitor (Node.js/ESM)
 - **constructor(nodeWsUrls: string[] | string, address: string)**
 - **monitorDeposits(onDeposit: (tx: any) => void, filter?: { messageText?: string; mosaicId?: string; amount?: string }, onError?: (err: any) => void)**
 - **close()**
