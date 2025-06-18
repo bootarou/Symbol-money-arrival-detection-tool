@@ -92,9 +92,6 @@ monitor.monitorDeposits(
 
 ---
 
-## Types / 型定義
-- `src/types/index.ts` を参照してください。
-
 ---
 
 ## Contributing / コントリビュート

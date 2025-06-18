@@ -32,6 +32,7 @@ export class DepositMonitor {
     this.ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        // コネクション時のuid取得
         if (data.uid && !this.uid) {
           this.uid = data.uid;
           this.ws.send(JSON.stringify({ uid: this.uid, subscribe: 'block' }));
@@ -44,6 +45,7 @@ export class DepositMonitor {
           return;
         }
         if(!data.data || !data.data.transaction) return;
+
         if (
           data.data.transaction &&
           data.data.transaction.type === 16724 &&
