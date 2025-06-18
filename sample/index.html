@@ -11,7 +11,6 @@
 <body>
   <h1>Symbol Deposit Monitor クライアントサイドサンプル</h1>
   <div>
-    <label>ノードWebSocket URL: <input id="wsUrl" value="wss://your-symbol-node:3001/ws" size="40"></label><br>
     <label>監視アドレス（ハイフンなし）: <input id="address" value="" size="48"></label><br>
     <label>メッセージ文字列: <input id="msg" value=""></label><br>
     <label>MosaicId: <input id="mosaicId" value=""></label><br>
@@ -30,13 +29,12 @@
       logDiv.textContent += msg + '\n';
     }
     document.getElementById('startBtn').onclick = () => {
-      const wsUrl = document.getElementById('wsUrl').value;
       const address = document.getElementById('address').value;
       const messageText = document.getElementById('msg').value;
       const mosaicId = document.getElementById('mosaicId').value;
       const amount = document.getElementById('amount').value;
       logDiv.textContent = '';
-      monitor = new DepositMonitor(wsUrl, address);
+      monitor = new DepositMonitor(["wss://xym760.llnodes.me:3001/ws","ws://80.209.225.238:3000/ws"], address);
       document.getElementById('startBtn').disabled = true;
       document.getElementById('stopBtn').disabled = false;
       // コールバックで検出後の処理を記述
@@ -47,6 +45,8 @@
         messageText: messageText || undefined,
         mosaicId: mosaicId || undefined,
         amount: amount || undefined
+      }, (error) => {
+        log('エラー発生: ' + error);
       });
       log('監視を開始しました');
     };
