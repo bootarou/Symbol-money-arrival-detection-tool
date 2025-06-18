@@ -32,7 +32,23 @@ This SDK enables real-time monitoring of Symbol blockchain deposits (incoming tr
 
 ---
 
-## Node.js用サンプルコード（`node/sample.js`）
+## クライアントサイド（ブラウザ）での利用方法
+
+1. `sample/index.html` をブラウザで開きます。
+2. 画面の各入力欄に以下を入力します。
+   - **ノードWebSocket URL**: 監視したいSymbolノードのWebSocketエンドポイント（カンマ区切りで複数指定可）
+   - **監視アドレス（ハイフンなし）**: 監視したいSymbolアドレス（例：Nから始まるアドレス、ハイフンなし）
+   - **メッセージ文字列**: （任意）特定の文字列を含むメッセージのみ検出したい場合に入力
+   - **MosaicId**: （任意）特定のモザイクIDのみ検出したい場合に入力
+   - **数量**: （任意）特定数量のみ検出したい場合に入力
+3. 「監視開始」ボタンを押すと、着金監視が始まります。
+4. 入金が検出されると、下部のログ欄にトランザクション情報が表示されます。
+5. 「停止」ボタンで監視を終了できます。
+
+### コードから直接利用したい場合
+
+`sample/deposit-monitor.js` をimportし、以下のように利用できます。
+
 ```js
 import { DepositMonitor } from './deposit-monitor.js';
 
@@ -46,7 +62,8 @@ const monitor = new DepositMonitor(nodeWsUrls, address);
 
 monitor.monitorDeposits(
   (tx) => {
-    console.log('入金検出:', JSON.stringify(tx, null, 2));
+    // 入金検出時の処理
+    console.log('入金検出:', tx);
   },
   {
     messageText: '注文123',
@@ -54,25 +71,21 @@ monitor.monitorDeposits(
     amount: '1000000'
   },
   (err) => {
+    // エラー時の処理
     console.error('エラー:', err);
   }
 );
 ```
 
----
-
-## クライアントサイド（ブラウザ）での利用例
-`sample/index.html` をブラウザで開き、必要な情報を入力して「監視開始」ボタンを押してください。
-
-- `sample/deposit-monitor.js` をimportし、コールバックで検出後の処理やエラー処理を記述できます。
-- フィルター条件（メッセージ、MosaicId、数量）はUIで指定可能です。
-- ノードURLはカンマ区切りで複数指定できます。
+- ノードURLは配列で複数指定可能です。
+- フィルター条件は必要なものだけ指定できます。
+- エラー時は第3引数のコールバックでハンドリングできます。
 
 ---
 
 ## API
 
-### DepositMonitor (Node.js/ESM)
+### DepositMonitor (Node.js/ESM/ブラウザ)
 - **constructor(nodeWsUrls: string[] | string, address: string)**
 - **monitorDeposits(onDeposit: (tx: any) => void, filter?: { messageText?: string; mosaicId?: string; amount?: string }, onError?: (err: any) => void)**
 - **close()**
@@ -90,8 +103,3 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 貢献は大歓迎です！機能追加やバグ修正のためのプルリクエストやIssueの作成をお待ちしています。
 
 ---
-
-## License / ライセンス
-This project is licensed under the MIT License. See the LICENSE file for more details.
-
-このプロジェクトはMITライセンスの下で公開されています。詳細はLICENSEファイルをご覧ください。
